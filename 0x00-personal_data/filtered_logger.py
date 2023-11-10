@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Create a function - 'filter_datum' that returns obfuscated log messages"""
-from re import sub
+import re
 from typing import List
 
 
@@ -20,4 +20,9 @@ def filter_datum(fields: List[str], redaction: str,
         A log message with the values in 'fields' obfuscated.
 
     """
-    obf_log = sub(, redaction)
+
+    return re.sub(
+        r'(?P<field>{})=[^{}]*'.format('|'.join(fields), separator),
+        r'\g<field>={}'.format(redaction),
+        message
+        )
