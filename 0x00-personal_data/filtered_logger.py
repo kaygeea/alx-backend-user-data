@@ -5,10 +5,12 @@ import re
 from typing import List
 
 
+PII_FIELDS = ("name", "email", "phone", "ssn", "password")
+
+
 def filter_datum(fields: List[str], redaction: str,
                  message: str, separator: str) -> str:
     """
-
     Obfuscate log messages by performing regex substitution
 
     Args:
@@ -29,6 +31,22 @@ def filter_datum(fields: List[str], redaction: str,
         )
 
 
+def get_logger() -> logging.Logger:
+    """
+    Create a new logger for user data.
+
+    Return:
+        A logging.Logger object
+    """
+    logger = logging.getLogger("user_data")
+    stream_handler = logging.StreamHandler()
+    stream_handler.setFormatter(RedactingFormatter(PII_FIELDS))
+    logger.setLevel(logging.INFO)
+    logger.propagate = False
+    logger.addHandler(stream_handler)
+    return logger
+
+
 class RedactingFormatter(logging.Formatter):
     """ Redacting Formatter class
     """
@@ -37,10 +55,9 @@ class RedactingFormatter(logging.Formatter):
     FORMAT = "[HOLBERTON] %(name)s %(levelname)s %(asctime)-15s: %(message)s"
     SEPARATOR = "; "
 
-    def __init__(self, fields: List[str]) -> None:
-        """Class constructor method"""
+    def __init__(self, fields: List[str]):
         super(RedactingFormatter, self).__init__(self.FORMAT)
-        self.fields: List[str] = fields
+        self.fields = fields
 
     def format(self, record: logging.LogRecord) -> str:
         """Implement format for a LogRecord"""
