@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Create a function - 'filter_datum' that returns obfuscated log messages"""
+import logging
 import re
 from typing import List
 
@@ -26,3 +27,25 @@ def filter_datum(fields: List[str], redaction: str,
         r'\g<field>={}'.format(redaction),
         message
         )
+
+class RedactingFormatter(logging.Formatter):
+    """ Redacting Formatter class
+    """
+
+    REDACTION = "***"
+    FORMAT = "[HOLBERTON] %(name)s %(levelname)s %(asctime)-15s: %(message)s"
+    SEPARATOR = "; "
+
+    def __init__(self, fields: List[str]) -> None:
+        super(RedactingFormatter, self).__init__(self.FORMAT)
+        self.fields: List[str] = fields
+
+    def format(self, record: logging.LogRecord) -> str:
+       """Implement format for a LogRecord"""
+
+       log_msg = super(RedactingFormatter, self).format(record)
+       log_msg_text = filter_datum(self.fields, self.REDACTION, log_msg, self.SEPARATOR)
+       return log_msg_text
+
+if __name__ == "__main__":
+    main()
