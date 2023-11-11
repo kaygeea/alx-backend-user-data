@@ -8,7 +8,7 @@ from typing import List
 def filter_datum(fields: List[str], redaction: str,
                  message: str, separator: str) -> str:
     """
-    
+
     Obfuscate log messages by performing regex substitution
 
     Args:
@@ -28,6 +28,7 @@ def filter_datum(fields: List[str], redaction: str,
         message
         )
 
+
 class RedactingFormatter(logging.Formatter):
     """ Redacting Formatter class
     """
@@ -41,11 +42,13 @@ class RedactingFormatter(logging.Formatter):
         self.fields: List[str] = fields
 
     def format(self, record: logging.LogRecord) -> str:
-       """Implement format for a LogRecord"""
+        """Implement format for a LogRecord"""
 
-       log_msg = super(RedactingFormatter, self).format(record)
-       log_msg_text = filter_datum(self.fields, self.REDACTION, log_msg, self.SEPARATOR)
-       return log_msg_text
+        log_msg = super(RedactingFormatter, self).format(record)
+        log_msg_text = filter_datum(self.fields, self.REDACTION,
+                                    log_msg, self.SEPARATOR)
+        return log_msg_text
+
 
 if __name__ == "__main__":
     main()
