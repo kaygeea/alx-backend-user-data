@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """Create a function - 'filter_datum' that returns obfuscated log messages"""
 import logging
+import mysql.connector
+import os
 import re
 from typing import List
 
@@ -45,6 +47,27 @@ def get_logger() -> logging.Logger:
     logger.propagate = False
     logger.addHandler(stream_handler)
     return logger
+
+
+def get_db() -> mysql.connector.connection.MySQLConnection:
+    """
+    Create a connector to a database.
+
+    Return:
+        A connector the specified database
+    """
+    db_host = os.getenv("PERSONAL_DATA_DB_HOST", "localhost")
+    db_name = os.getenv("PERSONAL_DATA_DB_NAME", "")
+    db_user = os.getenv("PERSONAL_DATA_DB_USERNAME", "root")
+    db_pwd = os.getenv("PERSONAL_DATA_DB_PASSWORD", "")
+    connection = mysql.connector.connect(
+        host=db_host,
+        port=3306,
+        user=db_user,
+        password=db_pwd,
+        database=db_name,
+    )
+    return connection
 
 
 class RedactingFormatter(logging.Formatter):
