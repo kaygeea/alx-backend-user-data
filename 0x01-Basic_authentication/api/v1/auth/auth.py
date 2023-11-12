@@ -11,8 +11,24 @@ class Auth:
         pass
 
     def require_auth(self, path: str, excluded_paths: List[str]) -> bool:
-        """Return False for now"""
-        return False
+        """Check whether an API endpoint requires authentication
+
+        Args:
+            path (str) - Incoming arg for the path to be checked
+            excluded_paths (list) - Incoming arg for a list of paths that
+                                    require authentication
+
+        Return:
+            A boolean indicating whether or not a checked path requires auth
+        """
+        if excluded_paths and path:
+            if path[-1] != '/':
+                full_path = path + '/'
+                return full_path not in excluded_paths
+            else:
+                return path not in excluded_paths
+        else:
+            return True
 
     def authorization_header(self, request=None) -> str:
         """Return None for now"""
