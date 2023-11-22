@@ -29,14 +29,14 @@ def pre_request_check() -> None:
                 '/api/v1/forbidden/'
         ]
         if auth.require_auth(request, auth_req_paths):
-            auth_header =  auth.authorization_header(request)
+            auth_header = auth.authorization_header(request)
             user = auth.current_user(request)
-            if auth_header == None:
+            if auth_header is None:
                 abort(401)
-            if user == None:
+            if user is None:
                 abort(403)
 
-    
+
 @app.errorhandler(404)
 def not_found(error) -> str:
     """ Not found handler
